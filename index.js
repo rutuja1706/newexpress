@@ -1,61 +1,28 @@
+const express=require("express");
+const app=express();
+app.use(express.json());
+const cors=require("cors");
+const conn = require("./config/db");
+require("dotenv").config()
+const userRoute = require("./middleware/user.Route");
 
-require("dotenv").config();
-const PORT=process.env.PORT
-console.log(PORT)
-const mongoose=require("mongoose")
-const express=require("express")
-const cors=require("cors")
-const app=express()
+const bagRoute = require("./middleware/bag.Router");
+app.use(cors());
 
-const main=require("./src/config/db")
-//console.log(connect)
-app.use(express.json())
-app.use(cors())
-
-//console.log(POR)
-
-
-
-//const userRoute=require("./features/user/user.router")
-
-const productRoute=require("./src/features/product/product.router")
-
-const cartRoute=require("./src/features/cart/cart.router")
-
-//const makeRoute=require("./features/makeover/makeover.router")
+app.get("/",(req,res)=>{
+    console.log("hello")
+    res.send("homepage");
+})
 
 
-//app.use("/users",userRoute)
-app.use("/products",productRoute)
-app.use("/carts",cartRoute)
-//app.use("/makeovers",makeRoute)
-
-
-
-app.listen(8000,async()=>{
+app.use("/",userRoute);
+app.use("/",bagRoute)
+app.listen(process.env.PORT,async ()=>{
     try{
-       await main()
-   
-    }catch(e){
-   console.log(e.message)
+       await conn
+       console.log("connected")
+    }catch{
+        console.log("not connected")
     }
-   
-       console.log(`port running on http://localhost:8000`)
-   })
-
-   // mongoimport --drop --db masaizon --collection users --file ./users.json --jsonArray
-   // {
-  
-  
-  //"name": "naio",
-  
-  //"email": "sdominique0@usda.gov",
- // "password": "male",
-
- // "age": 37
-//   }{
-
-  //"quantity":5,
-  //"user":"634b8b2b0a11c9f0e75d6fba",
-  //"product":"634b92bafbebc4dec1d9ef92"
-  //}
+    console.log("port is running on 8080")
+})
